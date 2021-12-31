@@ -1,0 +1,23 @@
+name: publish
+
+on: [push]
+
+jobs:
+  publish-app-image:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Build the app Docker image
+      run: |
+        docker build . --tag ghcr.io/save-sut/golang-upload-image:latest
+        docker run ghcr.io/save-sut/golang-upload-image:latest
+        docker push ghcr.io/save-sut/golang-upload-image:latest
