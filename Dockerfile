@@ -1,18 +1,19 @@
-# We need a golang build environment first
-FROM golang:1.17.0-alpine3.13
+FROM golang:1.17.0-alpine3.13 AS build
 
-WORKDIR /go/src/app
-COPY . /go/src/app
+WORKDIR /go/src
 
-RUN go build main.go
+COPY . .
 
-# We use a Docker multi-stage build here in order that we only take the compiled go executable
-FROM alpine:3.14
+RUN go mod download
 
-LABEL org.opencontainers.image.source="https://github.com/save-sut/golang-upload-image"
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o app .
 
-COPY --from=0 "/go/src/app/" app
+FROM alpine:latest
 
-ENTRYPOINT ./app
+WORKDIR /app
+
+COPY --from=build /go/src/app .
 
 EXPOSE 8000
+
+CMD ["./app"]
