@@ -1,19 +1,31 @@
+##
+## Build
+##
+
 FROM golang:1.17.0-alpine3.13 AS build
-
-WORKDIR /go/src
-
-COPY . .
-
-RUN go mod download
-
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o app .
-
-FROM alpine:latest
 
 WORKDIR /app
 
-COPY --from=build /go/src/app .
+COPY go.mod .
+COPY go.sum .
+RUN go mod download
 
-EXPOSE 8000
+COPY *.go ./
 
-CMD ["./app"]
+RUN go build -o /dgolang-upload-image
+
+##
+## Deploy
+##
+
+FROM gcr.io/distroless/base-debian10
+
+WORKDIR /
+
+COPY --from=build /dgolang-upload-image /dgolang-upload-image
+
+EXPOSE 8080
+
+USER nonroot:nonroot
+
+ENTRYPOINT ["/dgolang-upload-image"]

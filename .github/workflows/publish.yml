@@ -19,5 +19,4 @@ jobs:
     - name: Build the app Docker image
       run: |
         docker build . --tag ghcr.io/save-sut/golang-upload-image:latest
-        docker run ghcr.io/save-sut/golang-upload-image:latest
         docker push ghcr.io/save-sut/golang-upload-image:latest
