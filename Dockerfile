@@ -24,7 +24,7 @@ WORKDIR /
 
 COPY --from=build /golang-upload-image /golang-upload-image
 
-EXPOSE 8080
+EXPOSE 8000
 
 USER nonroot:nonroot
 
