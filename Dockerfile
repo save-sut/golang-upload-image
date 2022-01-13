@@ -12,7 +12,7 @@ RUN go mod download
 
 COPY *.go ./
 
-RUN go build -o /dgolang-upload-image
+RUN go build -o /golang-upload-image
 
 ##
 ## Deploy
@@ -22,10 +22,10 @@ FROM gcr.io/distroless/base-debian10
 
 WORKDIR /
 
-COPY --from=build /dgolang-upload-image /dgolang-upload-image
+COPY --from=build /golang-upload-image /golang-upload-image
 
 EXPOSE 8080
 
 USER nonroot:nonroot
 
-ENTRYPOINT ["/dgolang-upload-image"]
+ENTRYPOINT ["/golang-upload-image"]
